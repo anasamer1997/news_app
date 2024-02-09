@@ -1,4 +1,8 @@
+// ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:flutter/material.dart';
+import 'package:news_app/Models/newsModel.dart';
+import 'package:news_app/Service/repository/newsProvider.dart';
+import 'package:provider/provider.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -18,6 +22,8 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final watch = context.watch<NewsProvier>();
+    final read = context.read<NewsProvier>();
     return Scaffold(
       appBar: AppBar(
         title: const Text('News'),
@@ -30,6 +36,9 @@ class _HomeScreenState extends State<HomeScreen> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               TextField(
+                onChanged: (value) {
+                  read.getArticles(value, null);
+                },
                 controller: tf1,
                 decoration: const InputDecoration(hintText: 'search for ...'),
               ),
@@ -37,6 +46,9 @@ class _HomeScreenState extends State<HomeScreen> {
                 height: 8,
               ),
               TextField(
+                onChanged: (value) {
+                  read.getArticles(null, value);
+                },
                 controller: tf2,
                 decoration: const InputDecoration(hintText: 'search for ...'),
               ),
@@ -47,7 +59,19 @@ class _HomeScreenState extends State<HomeScreen> {
               const SizedBox(
                 height: 8,
               ),
-              CardListView(),
+              Consumer(
+                builder: (BuildContext context, NewsProvier value, Widget? _) {
+                  if (value.isloading) {
+                    return const Center(
+                      child: CircularProgressIndicator(),
+                    );
+                  }
+                  final articals = value.searchArticles1;
+                  return CardListView(
+                    articals: articals,
+                  );
+                },
+              ),
               const SizedBox(
                 height: 18,
               ),
@@ -55,7 +79,19 @@ class _HomeScreenState extends State<HomeScreen> {
               const SizedBox(
                 height: 10,
               ),
-              CardListView(),
+              Consumer(
+                builder: (BuildContext context, NewsProvier value, Widget? _) {
+                  if (value.isloading2) {
+                    return const Center(
+                      child: CircularProgressIndicator(),
+                    );
+                  }
+                  final articals = value.searchArticles2;
+                  return CardListView(
+                    articals: articals,
+                  );
+                },
+              )
             ],
           ),
         ),
@@ -66,9 +102,10 @@ class _HomeScreenState extends State<HomeScreen> {
 
 class CardListView extends StatelessWidget {
   const CardListView({
-    super.key,
-  });
-
+    Key? key,
+    required this.articals,
+  }) : super(key: key);
+  final List<Article> articals;
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -77,10 +114,11 @@ class CardListView extends StatelessWidget {
       height: MediaQuery.of(context).size.height * 0.35,
       child: ListView.builder(
         shrinkWrap: true,
-        itemCount: 20, // Replace with your actual data count
+        itemCount: articals.length, // Replace with your actual data count
         itemBuilder: (context, index) {
+          final artical = articals[index];
           return ListTile(
-            title: Text('Item $index from ListView 2'),
+            title: Text('Title: ${artical.title}'),
           );
         },
       ),

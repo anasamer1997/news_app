@@ -18,7 +18,7 @@ class NewsModel {
 
 class Article {
   final Source source;
-  final String author;
+  final String? author;
   final String title;
   final String description;
   final String url;
@@ -38,7 +38,7 @@ class Article {
   });
   factory Article.fromJson(Map<String, dynamic> json) => Article(
         source: Source.fromJson(json["source"]),
-        author: json["author"],
+        author: json["author"] ?? 'unknown',
         title: json["title"],
         description: json["description"],
         url: json["url"],
@@ -49,15 +49,12 @@ class Article {
 }
 
 class Source {
-  final String id;
   final String name;
 
   Source({
-    required this.id,
     required this.name,
   });
   factory Source.fromJson(Map<String, dynamic> json) => Source(
-        id: json["id"],
         name: json["name"],
       );
 }
