@@ -109,16 +109,26 @@ class CardListView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 6),
       decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(12), color: Colors.grey[400]),
       height: MediaQuery.of(context).size.height * 0.35,
-      child: ListView.builder(
+      child: ListView.separated(
         shrinkWrap: true,
-        itemCount: articals.length, // Replace with your actual data count
+        itemCount: articals.length,
+        // Replace with your actual data count
         itemBuilder: (context, index) {
           final artical = articals[index];
           return ListTile(
-            title: Text('Title: ${artical.title}'),
+            title: Text(
+              'Title: ${artical.title}',
+            ),
+          );
+        },
+        separatorBuilder: (BuildContext context, int index) {
+          return const Divider(
+            color: Colors.black,
+            thickness: 2,
           );
         },
       ),
